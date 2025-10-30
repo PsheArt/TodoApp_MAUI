@@ -1,0 +1,20 @@
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <filter id="materialShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="8" stdDeviation="24" flood-color="#000000" flood-opacity="0.12"/>
+    </filter>
+  </defs>
+  <rect x="192" y="256" width="640" height="512" rx="128" fill="#6200EE" filter="url(#materialShadow)" />
+  <path
+    d="M384 384 L448 448 L576 320"
+    stroke="#FFFFFF"
+    stroke-width="64"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    fill="none"
+  />
+
+  <rect x="384" y="512" width="256" height="32" rx="16" fill="#FFFFFF" opacity="0.8" />
+
+  <rect x="384" y="608" width="192" height="32" rx="16" fill="#FFFFFF" opacity="0.8" />
+</svg>
