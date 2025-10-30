@@ -12,7 +12,6 @@ namespace TodoMauiApp.Services
     public class TodoService : ITodoService
     {
         private const string PreferencesKey = "TodoItems";
-        private readonly string _fileName = "todo.json";
 
         public List<TodoItem> GetItems()
         {

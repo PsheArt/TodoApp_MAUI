@@ -9,8 +9,6 @@ public class ThemeService : IThemeService
     public event Action? ThemeChanged;
 
     public bool IsDarkMode { get; private set; }
-
-    // ✅ Конструктор БЕЗ параметров
     public ThemeService()
     {
         LoadTheme();
