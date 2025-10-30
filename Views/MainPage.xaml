@@ -1,0 +1,192 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="TodoMauiApp.Views.MainPage"
+             Shell.NavBarIsVisible="True"
+             BackgroundColor="{AppThemeBinding Light=White, Dark=#121212}">
+
+    <!-- ЕДИНСТВЕННЫЙ Shell.TitleView -->
+    <Shell.TitleView>
+        <Grid ColumnDefinitions="Auto,*,Auto" 
+              ColumnSpacing="10"
+              VerticalOptions="Center">
+
+            <!-- Кнопка поиска/фильтров -->
+            <Button Text="🔍"
+                    Clicked="OnMenuClicked"
+                    WidthRequest="40"
+                    HeightRequest="40"
+                    BackgroundColor="Transparent"
+                    TextColor="{AppThemeBinding Light=Black, Dark=White}"
+                    BorderWidth="0" />
+
+            <!-- Заголовок -->
+            <Label Text="Список дел"
+                   FontSize="18"
+                   FontAttributes="Bold"
+                   TextColor="{AppThemeBinding Light=Black, Dark=White}"
+                   HorizontalOptions="Center"
+                   VerticalOptions="Center"
+                   Grid.Column="1" />
+
+            <!-- Переключатель темы -->
+            <HorizontalStackLayout 
+                Grid.Column="2"
+                Spacing="4"
+                VerticalOptions="Center">
+                <Label Text="🌓" 
+                       FontSize="16"
+                       TextColor="{AppThemeBinding Light=Black, Dark=White}"
+                       VerticalOptions="Center" />
+                <Switch x:Name="ThemeSwitch"
+                        VerticalOptions="Center"
+                        Toggled="OnThemeToggled" />
+            </HorizontalStackLayout>
+        </Grid>
+    </Shell.TitleView>
+
+    <!-- Основной контент -->
+    <Grid RowDefinitions="*,Auto" 
+          Padding="{OnIdiom Phone='12', Tablet='20'}"
+          BackgroundColor="{AppThemeBinding Light=White, Dark=#121212}">
+
+        <!-- Список задач -->
+        <CollectionView ItemsSource="{Binding TodoItems}" Grid.Row="0" Margin="0,0,0,12">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <SwipeView>
+                        
+                        <SwipeView.LeftItems>
+                            <SwipeItems>
+                                <SwipeItem Text="Изменить" BackgroundColor="{AppThemeBinding Light=#4A90E2, Dark=#0A4A7A}" Invoked="OnEditSwipeInvoked" CommandParameter="{Binding .}" />
+                            </SwipeItems>
+                        </SwipeView.LeftItems>
+                        
+                        <SwipeView.RightItems>
+                            <SwipeItems>
+                                <SwipeItem Text="Удалить" BackgroundColor="{AppThemeBinding Light=Red, Dark=#B71C1C}" Invoked="OnDeleteSwipeInvoked" CommandParameter="{Binding .}" />
+                            </SwipeItems>
+                        </SwipeView.RightItems>
+
+                        <Border  Stroke="{AppThemeBinding Light=#E0E0E0, Dark=#333333}" StrokeThickness="1"  BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}"
+                            Padding="12" Margin="0,4" StrokeShape="RoundRectangle 8">
+
+                            <Grid ColumnDefinitions="Auto,Auto,Auto,*,Auto" ColumnSpacing="8">
+                                <CheckBox IsChecked="{Binding IsCompleted}"  VerticalOptions="Center" CheckedChanged="OnTodoCheckedChanged" />
+                                <BoxView Grid.Column="1" WidthRequest="10"  HeightRequest="10"  CornerRadius="5"
+                                    Color="{Binding Category, Converter={StaticResource CategoryToColorConverter}}" VerticalOptions="Center" />
+
+                                 <Label Grid.Column="2" 
+                                    Text="{Binding Priority, Converter={StaticResource PriorityToIconConverter}}"
+                                    FontFamily="Segoe UI Symbol"
+                                    FontSize="14"
+                                    TextColor="{Binding Priority, Converter={StaticResource PriorityToColorConverter}}"
+                                    VerticalOptions="Center" />
+
+                                  <VerticalStackLayout Grid.Column="3" Spacing="3">
+                                        <Label Text="{Binding Title}" 
+                                        TextColor="{AppThemeBinding Light=Black, Dark=White}"
+                                        TextDecorations="{Binding IsCompleted, Converter={StaticResource BoolToTextDecorationsConverter}}" 
+                                        FontSize="15" />
+
+                                        <Label Text="{Binding DueDate, StringFormat='До: {0:dd.MM.yyyy HH:mm}'}"
+                                        IsVisible="{Binding DueDate, Converter={StaticResource NullToBoolConverter}}"
+                                        FontSize="11"
+                                        TextColor="{AppThemeBinding Light=Gray, Dark=#AAAAAA}" />
+
+                                        <CollectionView ItemsSource="{Binding SubTasks}" 
+                                        IsVisible="{Binding SubTasks, Converter={StaticResource ListToVisibilityConverter}}">
+                                        <CollectionView.ItemTemplate>
+                                            <DataTemplate>
+                                                <HorizontalStackLayout Spacing="8" Margin="16,2,0,2">
+                                                    <CheckBox IsChecked="{Binding IsCompleted}" 
+                                                      CheckedChanged="OnSubTaskCheckedChanged"
+                                                      Scale="0.9" />
+                                                    <Label Text="{Binding Title}" 
+                                                       FontSize="13"
+                                                       TextColor="{AppThemeBinding Light=Black, Dark=White}"
+                                                       TextDecorations="{Binding IsCompleted, Converter={StaticResource BoolToTextDecorationsConverter}}" />    
+                                                </HorizontalStackLayout>
+                                            </DataTemplate>
+                                        </CollectionView.ItemTemplate>
+                                    </CollectionView>
+                                </VerticalStackLayout>
+                            </Grid>
+                        </Border>
+                    </SwipeView>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <!-- Форма добавления -->
+        <VerticalStackLayout Grid.Row="1" Spacing="10">
+            <Picker x:Name="CategoryPicker"
+                    Title="Категория"
+                    TextColor="{AppThemeBinding Light=Black, Dark=White}"
+                    BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}"
+                    TitleColor="{AppThemeBinding Light=Gray, Dark=#AAAAAA}" />
+
+            <HorizontalStackLayout Spacing="8">
+                <Label Text="Приоритет:" 
+                       TextColor="{AppThemeBinding Light=Black, Dark=White}"
+                       VerticalOptions="Center" />
+                <Picker x:Name="PriorityPicker" 
+                        WidthRequest="140"
+                        TextColor="{AppThemeBinding Light=Black, Dark=White}"
+                        BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}" />
+            </HorizontalStackLayout>
+
+            <HorizontalStackLayout Spacing="8">
+                <Label Text="Дедлайн:" 
+                       TextColor="{AppThemeBinding Light=Black, Dark=White}"
+                       VerticalOptions="Center" />
+                <DatePicker x:Name="DueDatePicker" 
+                            TextColor="{AppThemeBinding Light=Black, Dark=White}"
+                            BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}" />
+                <CheckBox x:Name="NoDeadlineCheckBox"  
+                          CheckedChanged="OnNoDeadlineCheckedChanged" />
+            </HorizontalStackLayout>
+
+            <HorizontalStackLayout Spacing="8">
+                <Label Text="Повтор:" VerticalOptions="Center" />
+                <Picker x:Name="RecurrencePicker" WidthRequest="150" />
+                <Label Text="Каждые:" VerticalOptions="Center" IsVisible="{Binding Source={x:Reference RecurrencePicker}, Path=SelectedIndex, Converter={StaticResource RecurrenceToVisibilityConverter}}" />
+                <Entry x:Name="RecurrenceIntervalEntry"  WidthRequest="60" IsVisible="{Binding Source={x:Reference RecurrencePicker}, Path=SelectedIndex, Converter={StaticResource RecurrenceToVisibilityConverter}}"
+                   Text="1"
+                   Keyboard="Numeric" />
+                <Label Text="дн." VerticalOptions="Center" 
+                IsVisible="{Binding Source={x:Reference RecurrencePicker}, Path=SelectedIndex, Converter={StaticResource RecurrenceToVisibilityConverter}}" />
+            </HorizontalStackLayout>
+
+            <VerticalStackLayout x:Name="SubTasksContainer" Spacing="4" Margin="0,8,0,0">
+                <Label Text="Подзадачи:" 
+                       FontAttributes="Bold"
+                       TextColor="{AppThemeBinding Light=Black, Dark=White}"
+                       IsVisible="{Binding Source={x:Reference SubTasksContainer}, Path=Children.Count, Converter={StaticResource CountToVisibilityConverter}}" />
+            </VerticalStackLayout>
+
+            <Button Text="➕ Добавить подзадачу" 
+                    Clicked="OnAddSubTaskClicked"
+                    BackgroundColor="{AppThemeBinding Light=#4A90E2, Dark=#0A4A7A}"
+                    TextColor="White" />
+
+            <HorizontalStackLayout Spacing="8">
+                <Editor x:Name="NewItemEntry"
+                        Placeholder="Новая задача..."
+                        PlaceholderColor="{AppThemeBinding Light=Gray, Dark=#AAAAAA}"
+                        TextColor="{AppThemeBinding Light=Black, Dark=White}"
+                        BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}"
+                        AutoSize="TextChanges"
+                        MaximumHeightRequest="100"
+                        FontSize="14" />
+                <Button Text="➕" 
+                        WidthRequest="44"
+                        HeightRequest="44"
+                        CornerRadius="22"
+                        Clicked="OnAddClicked"
+                        BackgroundColor="{AppThemeBinding Light=#4A90E2, Dark=#0A4A7A}"
+                        TextColor="White" />
+            </HorizontalStackLayout>
+        </VerticalStackLayout>
+    </Grid>
+</ContentPage>

@@ -1,0 +1,24 @@
+﻿<?xml version = "1.0" encoding = "UTF-8" ?>
+<Application xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:TodoMauiApp"
+             xmlns:converters="clr-namespace:TodoMauiApp.Converters"
+             x:Class="TodoMauiApp.App">
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Resources/Styles/Colors.xaml" />
+                <ResourceDictionary Source="Resources/Styles/Styles.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+            <converters:BoolToTextDecorationsConverter x:Key="BoolToTextDecorationsConverter" />
+            <converters:CategoryToColorConverter x:Key="CategoryToColorConverter" />
+            <converters:PriorityToColorConverter x:Key="PriorityToColorConverter" />
+            <converters:PriorityToIconConverter x:Key="PriorityToIconConverter" />
+            <converters:PriorityToIconConverter x:Key="DueDateToBackgroundColorConverter" />
+            <converters:RecurrenceToVisibilityConverter x:Key="RecurrenceToVisibilityConverter" />
+            <converters:NullToBoolConverter x:Key="NullToBoolConverter" />
+            <converters:ListToVisibilityConverter x:Key="ListToVisibilityConverter" />
+            <converters:CountToVisibilityConverter x:Key="CountToVisibilityConverter" />
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>
